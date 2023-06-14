@@ -1,9 +1,11 @@
 use crate::{
-    entity::{enemy::*, player::*},
+    component::{enemy::*, player::*},
     keyboard_helper::*,
+    resource::EnemyTimer,
     *,
 };
 use bevy::prelude::*;
+use bevy::time::{Timer, TimerMode};
 
 pub fn spawn_initial_enemies(
     mut commands: Commands,
@@ -33,14 +35,6 @@ pub fn spawn_initial_enemies(
                 Enemy { direction },
             ));
         })
-}
-
-#[derive(Resource)]
-pub struct EnemyTimer(pub Timer);
-impl Default for EnemyTimer {
-    fn default() -> Self {
-        EnemyTimer(Timer::from_seconds(ENEMY_SPAWN_TIME, TimerMode::Repeating))
-    }
 }
 
 pub fn tick_enemy_spawn_timer(mut enemy_timer: ResMut<EnemyTimer>, time: Res<Time>) {
@@ -159,10 +153,12 @@ pub fn confine_enemy_movement(
 }
 
 pub fn enemy_hit_player(
-    mut commands: Commands,
     enemy_query: Query<&Transform, With<Enemy>>,
+    mut commands: Commands,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
+    mut game_over_event_writer: EventWriter<GameOver>,
     audio: Res<Audio>,
+    score: Res<Score>,
     asset_server: Res<AssetServer>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
@@ -172,7 +168,7 @@ pub fn enemy_hit_player(
                 .distance(enemy_transform.translation);
 
             if distance < HALF_ENEMY_SIZE + HALF_PLAYER_SIZE {
-                println!("Game over!");
+                game_over_event_writer.send(GameOver { score: score.value });
                 let explosion_sound = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(explosion_sound);
                 commands.entity(player_entity).despawn();

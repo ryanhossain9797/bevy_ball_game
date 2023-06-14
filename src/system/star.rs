@@ -2,8 +2,14 @@ use bevy::prelude::*;
 use rand::random;
 use std::ops::{Deref, DerefMut};
 
-use crate::entity::player::*;
-use crate::entity::star::*;
+use crate::component::player::*;
+use crate::component::star::HALF_STAR_SIZE;
+use crate::component::star::INITIAL_NUMBER_OF_STARS;
+use crate::component::star::STAR_SIZE;
+use crate::component::star::STAR_SPAWN_TIME;
+use crate::component::star::*;
+use crate::resource::Score;
+use crate::resource::StarTimer;
 use crate::system::player::*;
 
 pub fn spawn_initial_stars(
@@ -35,21 +41,8 @@ pub fn spawn_initial_stars(
         })
 }
 
-#[derive(Resource)]
-pub struct StarTimer(pub Timer);
-impl Default for StarTimer {
-    fn default() -> Self {
-        StarTimer(Timer::from_seconds(STAR_SPAWN_TIME, TimerMode::Repeating))
-    }
-}
-
 pub fn tick_star_spawn_timer(mut star_timer: ResMut<StarTimer>, time: ResMut<Time>) {
     star_timer.0.tick(time.delta());
-}
-
-#[derive(Resource, Default)]
-pub struct Score {
-    pub value: usize,
 }
 
 pub fn spawn_occassional_stars(

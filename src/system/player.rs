@@ -1,6 +1,6 @@
 use crate::*;
 use bevy::prelude::*;
-use entity::player::*;
+use component::player::*;
 
 use crate::keyboard_helper::KeyboardDirection;
 
