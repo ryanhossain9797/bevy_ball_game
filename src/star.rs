@@ -1,4 +1,4 @@
-use bevy::prelude::{App, Plugin};
+use bevy::prelude::*;
 
 use self::{resource::StarTimer, system::*};
 

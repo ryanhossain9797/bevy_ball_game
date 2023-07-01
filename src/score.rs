@@ -1,10 +1,9 @@
-use bevy::prelude::{App, Plugin};
-
-use self::{resource::*, system::*};
-
 pub mod component;
 pub mod resource;
 mod system;
+
+use self::{resource::*, system::*};
+use bevy::prelude::*;
 
 pub struct ScorePlugin;
 
