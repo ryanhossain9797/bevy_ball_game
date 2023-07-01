@@ -1,8 +1,6 @@
+use crate::score::resource::Score;
 use crate::{
-    component::{enemy::*, player::*},
-    keyboard_helper::*,
-    resource::EnemyTimer,
-    *,
+    enemy::component::*, enemy::resource::EnemyTimer, keyboard_helper::*, player::component::*, *,
 };
 use bevy::prelude::*;
 use bevy::time::{Timer, TimerMode};

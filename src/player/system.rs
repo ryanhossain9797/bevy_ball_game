@@ -1,6 +1,6 @@
-use crate::*;
+use super::component::*;
+use crate::{score::resource::Score, *, star::component::Star};
 use bevy::prelude::*;
-use component::player::*;
 
 use crate::keyboard_helper::KeyboardDirection;
 
@@ -75,5 +75,32 @@ pub fn confine_player_movement(
             }
         }
         player_transform.translation = translation;
+    }
+}
+
+pub fn player_pickup_star(
+    mut commands: Commands,
+    star_query: Query<(Entity, &Transform), With<Star>>,
+    mut player_query: Query<&Transform, With<Player>>,
+    audio: Res<Audio>,
+    asset_server: Res<AssetServer>,
+    mut score: ResMut<Score>,
+) {
+    match player_query.get_single_mut() {
+        Ok(player_transform) => {
+            star_query.for_each(|(star_entity, star_transform)| {
+                let distance = player_transform
+                    .translation
+                    .distance(star_transform.translation);
+
+                if distance < HALF_STAR_SIZE + HALF_PLAYER_SIZE {
+                    let pickup_sound = asset_server.load("audio/laserLarge_000.ogg");
+                    audio.play(pickup_sound);
+                    commands.entity(star_entity).despawn();
+                    score.value += 1;
+                }
+            });
+        }
+        _ => (),
     }
 }
