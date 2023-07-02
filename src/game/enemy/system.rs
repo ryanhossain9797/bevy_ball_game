@@ -1,9 +1,14 @@
-use crate::score::resource::Score;
-use crate::{
-    enemy::component::*, enemy::resource::EnemyTimer, keyboard_helper::*, player::component::*, *,
-};
+use crate::event::GameOver;
+use crate::game::player::HALF_PLAYER_SIZE;
+use crate::game::score::resource::Score;
+use crate::game::{enemy::component::*, enemy::resource::EnemyTimer, player::component::*, *};
+use crate::keyboard_helper::*;
 use bevy::prelude::*;
 use bevy::time::{Timer, TimerMode};
+use bevy::window::PrimaryWindow;
+use rand::random;
+
+use super::{ENEMY_SIZE, HALF_ENEMY_SIZE, NUMBER_OF_ENEMIES, ENEMY_SPEED};
 
 pub fn spawn_initial_enemies(
     mut commands: Commands,

@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
+use crate::AppState;
+
 use self::{resource::StarTimer, system::*};
+
+use super::SimulationState;
 
 pub mod component;
 pub mod resource;
@@ -17,7 +21,15 @@ impl Plugin for StarPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<StarTimer>()
             .add_startup_system(spawn_initial_stars)
-            .add_system(tick_star_spawn_timer)
-            .add_system(spawn_occassional_stars);
+            .add_system(
+                tick_star_spawn_timer
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
+            )
+            .add_system(
+                spawn_occassional_stars
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
+            );
     }
 }

@@ -1,6 +1,13 @@
-use super::component::*;
-use crate::{score::resource::Score, *, star::component::Star};
-use bevy::prelude::*;
+use super::{component::*, HALF_PLAYER_SIZE, PLAYER_SPEED};
+use crate::{
+    game::{
+        score::resource::Score,
+        star::{component::Star, HALF_STAR_SIZE},
+        *,
+    },
+    keyboard_helper,
+};
+use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::keyboard_helper::KeyboardDirection;
 

@@ -2,13 +2,12 @@ use bevy::prelude::*;
 use rand::random;
 use std::ops::{Deref, DerefMut};
 
-use crate::player::component::Player;
-use crate::player::HALF_PLAYER_SIZE;
-
-use crate::score::resource::Score;
-use crate::star::component::*;
-use crate::star::component::*;
-use crate::star::resource::StarTimer;
+use crate::game::player::component::Player;
+use crate::game::player::HALF_PLAYER_SIZE;
+use crate::game::score::resource::Score;
+use crate::game::star::component::*;
+use crate::game::star::component::*;
+use crate::game::star::resource::StarTimer;
 
 use super::{HALF_STAR_SIZE, INITIAL_NUMBER_OF_STARS, STAR_SIZE};
 
