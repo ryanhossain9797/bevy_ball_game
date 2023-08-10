@@ -46,7 +46,7 @@ impl Plugin for EnemyPlugin {
                 .in_set(OnUpdate(AppState::Game))
                 .in_set(OnUpdate(SimulationState::Running)),
         )
-        .add_systems(
+        .add_system(
             (confine_enemy_movement)
                 .in_set(EnemySystemSet::ConfinementSystemSet)
                 .in_set(OnUpdate(AppState::Game))
