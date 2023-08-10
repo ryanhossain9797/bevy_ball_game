@@ -32,11 +32,14 @@ pub fn transition_to_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::P) {
-        let new_state = match simulation_state.0 {
-            AppState::MainMenu => commands.insert_resource(NextState(Some(AppState::Game))),
-            _ => (),
-        };
+    match keyboard_input.just_pressed(KeyCode::P) {
+        true => {
+            match simulation_state.0 {
+                AppState::MainMenu => commands.insert_resource(NextState(Some(AppState::Game))),
+                _ => (),
+            };
+        }
+        false => (),
     }
 }
 
@@ -45,10 +48,13 @@ pub fn transition_to_menu_state(
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::P) {
-        let new_state = match simulation_state.0 {
-            AppState::Game => commands.insert_resource(NextState(Some(AppState::MainMenu))),
-            _ => (),
-        };
+    match keyboard_input.just_pressed(KeyCode::P) {
+        true => {
+            match simulation_state.0 {
+                AppState::Game => commands.insert_resource(NextState(Some(AppState::MainMenu))),
+                _ => (),
+            };
+        }
+        false => (),
     }
 }
