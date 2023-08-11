@@ -27,23 +27,27 @@ impl Plugin for PlayerPlugin {
         app.configure_set(
             PlayerSystemSet::ConfinementSystemSet.after(PlayerSystemSet::MovementSystemSet),
         )
-        .add_startup_system(spawn_player)
+        .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
         .add_system(
             player_movement
                 .in_set(PlayerSystemSet::MovementSystemSet)
-                .run_if(in_state(AppState::Game))
-                .run_if(in_state(SimulationState::Running)),
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
         )
         .add_system(
             confine_player_movement
                 .in_set(PlayerSystemSet::ConfinementSystemSet)
-                .run_if(in_state(AppState::Game))
-                .run_if(in_state(SimulationState::Running)),
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
         )
         .add_system(
             player_pickup_star
-                .run_if(in_state(AppState::Game))
-                .run_if(in_state(SimulationState::Running)),
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
+        )
+        .add_system(
+            despawn_player
+                .in_schedule(OnExit(AppState::Game))
         );
     }
 }

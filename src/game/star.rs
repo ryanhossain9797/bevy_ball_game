@@ -20,16 +20,18 @@ pub struct StarPlugin;
 impl Plugin for StarPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<StarTimer>()
-            .add_startup_system(spawn_initial_stars)
             .add_system(
-                tick_star_spawn_timer
-                    .run_if(in_state(AppState::Game))
-                    .run_if(in_state(SimulationState::Running)),
+                spawn_initial_stars
+                    .in_schedule(OnEnter(AppState::Game))
+            )
+            .add_systems(
+                (tick_star_spawn_timer, spawn_occassional_stars)
+                    .in_set(OnUpdate(AppState::Game))
+                    .in_set(OnUpdate(SimulationState::Running)),
             )
             .add_system(
-                spawn_occassional_stars
-                    .run_if(in_state(AppState::Game))
-                    .run_if(in_state(SimulationState::Running)),
+                despawn_stars
+                    .in_schedule(OnExit(AppState::Game))
             );
     }
 }

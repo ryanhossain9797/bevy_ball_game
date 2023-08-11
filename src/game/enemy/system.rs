@@ -2,11 +2,10 @@ use crate::event::GameOver;
 use crate::game::player::HALF_PLAYER_SIZE;
 use crate::game::score::resource::Score;
 use crate::game::{enemy::component::*, enemy::resource::EnemyTimer, player::component::*, *};
-use crate::keyboard_helper::*;
-use bevy::prelude::*;
 use bevy::time::{Timer, TimerMode};
 use bevy::window::PrimaryWindow;
 use rand::random;
+use rand::seq::SliceRandom;
 
 use super::{ENEMY_SIZE, HALF_ENEMY_SIZE, NUMBER_OF_ENEMIES, ENEMY_SPEED};
 
@@ -48,26 +47,45 @@ pub fn spawn_occassional_enemies(
     mut commands: Commands,
     window_query: Query<&Window>,
     asset_server: Res<AssetServer>,
-    time: Res<Time>,
-    mut enemy_timer: ResMut<EnemyTimer>,
+    enemy_timer: Res<EnemyTimer>,
+    enemy_query: Query<(&Transform, &Enemy)>,
 ) {
     let window = window_query
         .get_single()
         .expect("Primary windows not found");
 
-    if enemy_timer.0.finished() {
-        let x = (random::<f32>() * (window.width() - ENEMY_SIZE)) + (HALF_ENEMY_SIZE);
-        let y = (random::<f32>() * (window.height() - ENEMY_SIZE)) + (HALF_ENEMY_SIZE);
-        let direction = Vec2::new(random::<f32>(), random::<f32>()).normalize();
+    
 
-        commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(x, y, 0.0),
-                texture: asset_server.load("sprites/ball_red_large.png"),
-                ..default()
-            },
-            Enemy { direction },
-        ));
+    match enemy_timer.0.finished() {
+        true => {
+            let enemies = enemy_query
+                .iter()
+                .collect::<Vec<_>>();
+
+            let maybe_parent_enemy = 
+                enemies
+                    .choose(&mut rand::thread_rng());
+
+            match maybe_parent_enemy {
+                Some ((transform, _)) => 
+                    {
+                        let direction = Vec2::new(random::<f32>(), random::<f32>()).normalize();
+
+                        commands.spawn((
+                            SpriteBundle {
+                                transform: Transform::from_xyz(transform.translation.x, transform.translation.y, 0.0),
+                                texture: asset_server.load("sprites/ball_red_large.png"),
+                                ..default()
+                            },
+                            Enemy { direction },
+                        ));
+                    }
+                None => ()
+            }
+
+            
+        }
+        false => (),
     }
 }
 
@@ -95,15 +113,15 @@ pub fn bounce_enemy_movement(
             let x_min = 0.0 + HALF_ENEMY_SIZE;
             let x_max = window.width() - HALF_ENEMY_SIZE;
 
-            (translation.x < x_min && enemy.direction.x < 0.0)
-                || (translation.x > x_max && enemy.direction.x >= 0.0)
+            (translation.x <= x_min && enemy.direction.x < 0.0)
+                || (translation.x >= x_max && enemy.direction.x >= 0.0)
         };
         let invert_y = {
             let y_min = 0.0 + HALF_ENEMY_SIZE;
             let y_max = window.height() - HALF_ENEMY_SIZE;
 
-            (translation.y < y_min && enemy.direction.y < 0.0)
-                || (translation.y > y_max && enemy.direction.y >= 0.0)
+            (translation.y <= y_min && enemy.direction.y < 0.0)
+                || (translation.y >= y_max && enemy.direction.y >= 0.0)
         };
         if invert_x || invert_y {
             let bounce_sound_1 = asset_server.load("audio/pluck_001.ogg");
@@ -157,14 +175,13 @@ pub fn confine_enemy_movement(
 
 pub fn enemy_hit_player(
     enemy_query: Query<&Transform, With<Enemy>>,
-    mut commands: Commands,
-    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    mut player_query: Query<&Transform, With<Player>>,
     mut game_over_event_writer: EventWriter<GameOver>,
     audio: Res<Audio>,
     score: Res<Score>,
     asset_server: Res<AssetServer>,
 ) {
-    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+    if let Ok(player_transform) = player_query.get_single_mut() {
         enemy_query.for_each(|enemy_transform| {
             let distance = player_transform
                 .translation
@@ -174,8 +191,14 @@ pub fn enemy_hit_player(
                 game_over_event_writer.send(GameOver { score: score.value });
                 let explosion_sound = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(explosion_sound);
-                commands.entity(player_entity).despawn();
             }
         });
     }
+}
+
+pub fn despawn_enemies(
+    mut commands: Commands,
+    enemy_query: Query<Entity, With<Enemy>>,
+) {
+    enemy_query.iter().for_each(|enemy| commands.entity(enemy).despawn())
 }

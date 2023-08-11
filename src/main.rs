@@ -40,8 +40,8 @@ fn main() {
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
-    MainMenu,
     #[default]
+    MainMenu,
     Game,
     GameOver,
 }

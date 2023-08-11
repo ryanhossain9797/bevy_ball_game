@@ -19,11 +19,14 @@ pub fn exit_game(keyboard_input: Res<Input<KeyCode>>, mut exit_event_writer: Eve
     }
 }
 
-pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
-    if !game_over_event_reader.is_empty() {
-        game_over_event_reader
-            .iter()
-            .for_each(|event| println!("Your score is {}", event.score));
+pub fn handle_game_over(
+    mut game_over_event_reader: EventReader<GameOver>,
+    mut app_state_next_state: ResMut<NextState<AppState>>,
+) {
+    for event in game_over_event_reader.iter() {
+        println!("Your final score is: {}", event.score.to_string());
+        app_state_next_state.set(AppState::GameOver);
+        println!("Entered AppState::GameOver");
     }
 }
 

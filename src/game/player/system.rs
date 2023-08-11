@@ -111,3 +111,9 @@ pub fn player_pickup_star(
         _ => (),
     }
 }
+
+pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
+    if let Ok(player) = player_query.get_single() {
+        commands.entity(player).despawn();
+    }
+}
