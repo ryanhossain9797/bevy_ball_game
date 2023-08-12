@@ -5,20 +5,12 @@ use bevy::window::PrimaryWindow;
 mod event;
 mod game;
 mod keyboard_helper;
-mod menu;
-mod system;
+mod main_menu;
+mod systems;
 
-use event::*;
-use game::enemy::resource::EnemyTimer;
-use game::enemy::*;
-use game::player::*;
-use game::score::*;
-use game::star::resource::StarTimer;
-use game::star::*;
 use game::GamePlugin;
-use menu::MainMenuPlugin;
-use rand::*;
-use system::*;
+use main_menu::MainMenuPlugin;
+use systems::*;
 
 fn main() {
     App::new()

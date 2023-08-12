@@ -1,6 +1,6 @@
 use self::{
     enemy::EnemyPlugin, player::PlayerPlugin, score::ScorePlugin, star::StarPlugin,
-    system::toggle_simulation,
+    system::{toggle_simulation, pause_simulation, resume_simulation},
 };
 use crate::{event::GameOver, AppState};
 use bevy::prelude::*;
@@ -17,10 +17,12 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_state::<SimulationState>()
             .add_event::<GameOver>()
+            .add_system(pause_simulation.in_schedule(OnEnter(AppState::Game)))
             .add_plugin(EnemyPlugin)
             .add_plugin(PlayerPlugin)
             .add_plugin(StarPlugin)
             .add_plugin(ScorePlugin)
+            .add_system(resume_simulation.in_schedule(OnExit(AppState::Game)))
             .add_system(toggle_simulation.run_if(in_state(AppState::Game)));
     }
 }
