@@ -31,14 +31,14 @@ pub fn handle_game_over(
 }
 
 pub fn transition_to_game_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
+    mut simulation_state_next_state: ResMut<NextState<AppState>>
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {
             match simulation_state.0 {
-                AppState::MainMenu => commands.insert_resource(NextState(Some(AppState::Game))),
+                AppState::MainMenu => simulation_state_next_state.set(AppState::Game),
                 _ => (),
             };
         }
@@ -47,14 +47,14 @@ pub fn transition_to_game_state(
 }
 
 pub fn transition_to_menu_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
+    mut simulation_state_next_state: ResMut<NextState<AppState>>
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {
             match simulation_state.0 {
-                AppState::Game => commands.insert_resource(NextState(Some(AppState::MainMenu))),
+                AppState::Game => simulation_state_next_state.set(AppState::MainMenu),
                 _ => (),
             };
         }
