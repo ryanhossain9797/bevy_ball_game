@@ -31,11 +31,11 @@ impl Plugin for PlayerPlugin {
         .add_systems(
             (
                 player_movement.in_set(PlayerSystemSet::MovementSystemSet),
-                confine_player_movement.in_set(PlayerSystemSet::ConfinementSystemSet), 
-                player_pickup_star
+                confine_player_movement.in_set(PlayerSystemSet::ConfinementSystemSet),
+                player_pickup_star,
             )
-            .in_set(OnUpdate(AppState::Game))
-            .in_set(OnUpdate(SimulationState::Running)),
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
         )
         .add_system(despawn_player.in_schedule(OnExit(AppState::Game)));
     }

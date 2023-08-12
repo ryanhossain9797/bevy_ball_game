@@ -7,7 +7,7 @@ use bevy::window::PrimaryWindow;
 use rand::random;
 use rand::seq::SliceRandom;
 
-use super::{ENEMY_SIZE, HALF_ENEMY_SIZE, NUMBER_OF_ENEMIES, ENEMY_SPEED};
+use super::{ENEMY_SIZE, ENEMY_SPEED, HALF_ENEMY_SIZE, NUMBER_OF_ENEMIES};
 
 pub fn spawn_initial_enemies(
     mut commands: Commands,
@@ -54,36 +54,31 @@ pub fn spawn_occassional_enemies(
         .get_single()
         .expect("Primary windows not found");
 
-    
-
     match enemy_timer.0.finished() {
         true => {
-            let enemies = enemy_query
-                .iter()
-                .collect::<Vec<_>>();
+            let enemies = enemy_query.iter().collect::<Vec<_>>();
 
-            let maybe_parent_enemy = 
-                enemies
-                    .choose(&mut rand::thread_rng());
+            let maybe_parent_enemy = enemies.choose(&mut rand::thread_rng());
 
             match maybe_parent_enemy {
-                Some ((transform, _)) => 
-                    {
-                        let direction = Vec2::new(random::<f32>(), random::<f32>()).normalize();
+                Some((transform, _)) => {
+                    let direction = Vec2::new(random::<f32>(), random::<f32>()).normalize();
 
-                        commands.spawn((
-                            SpriteBundle {
-                                transform: Transform::from_xyz(transform.translation.x, transform.translation.y, 0.0),
-                                texture: asset_server.load("sprites/ball_red_large.png"),
-                                ..default()
-                            },
-                            Enemy { direction },
-                        ));
-                    }
-                None => ()
+                    commands.spawn((
+                        SpriteBundle {
+                            transform: Transform::from_xyz(
+                                transform.translation.x,
+                                transform.translation.y,
+                                0.0,
+                            ),
+                            texture: asset_server.load("sprites/ball_red_large.png"),
+                            ..default()
+                        },
+                        Enemy { direction },
+                    ));
+                }
+                None => (),
             }
-
-            
         }
         false => (),
     }
@@ -196,9 +191,8 @@ pub fn enemy_hit_player(
     }
 }
 
-pub fn despawn_enemies(
-    mut commands: Commands,
-    enemy_query: Query<Entity, With<Enemy>>,
-) {
-    enemy_query.iter().for_each(|enemy| commands.entity(enemy).despawn())
+pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
+    enemy_query
+        .iter()
+        .for_each(|enemy| commands.entity(enemy).despawn())
 }

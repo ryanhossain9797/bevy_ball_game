@@ -33,7 +33,7 @@ pub fn handle_game_over(
 pub fn transition_to_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
-    mut simulation_state_next_state: ResMut<NextState<AppState>>
+    mut simulation_state_next_state: ResMut<NextState<AppState>>,
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {
@@ -49,7 +49,7 @@ pub fn transition_to_game_state(
 pub fn transition_to_menu_state(
     keyboard_input: Res<Input<KeyCode>>,
     simulation_state: Res<State<AppState>>,
-    mut simulation_state_next_state: ResMut<NextState<AppState>>
+    mut simulation_state_next_state: ResMut<NextState<AppState>>,
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {

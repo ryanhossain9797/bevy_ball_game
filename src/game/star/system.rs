@@ -70,9 +70,8 @@ pub fn spawn_occassional_stars(
     }
 }
 
-pub fn despawn_stars(
-    mut commands: Commands,
-    star_query: Query<Entity, With<Star>>,
-) {
-    star_query.iter().for_each(|star| commands.entity(star).despawn())
+pub fn despawn_stars(mut commands: Commands, star_query: Query<Entity, With<Star>>) {
+    star_query
+        .iter()
+        .for_each(|star| commands.entity(star).despawn())
 }

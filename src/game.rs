@@ -1,6 +1,9 @@
 use self::{
-    enemy::EnemyPlugin, player::PlayerPlugin, score::ScorePlugin, star::StarPlugin,
-    system::{toggle_simulation, pause_simulation, resume_simulation},
+    enemy::EnemyPlugin,
+    player::PlayerPlugin,
+    score::ScorePlugin,
+    star::StarPlugin,
+    system::{pause_simulation, resume_simulation, toggle_simulation},
 };
 use crate::{event::GameOver, AppState};
 use bevy::prelude::*;
