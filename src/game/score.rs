@@ -17,9 +17,13 @@ impl Plugin for ScorePlugin {
             .init_resource::<HighScore>()
             .add_system(insert_score.in_schedule(OnEnter(AppState::Game)))
             .add_systems(
-                (display_score, update_high_scores, on_high_scores_updated)
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                (
+                    display_score, 
+                    update_high_scores,
+                    on_high_scores_updated
+                )
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
             )
             .add_system(remove_score.in_schedule(OnExit(AppState::Game)));
     }

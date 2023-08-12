@@ -25,9 +25,12 @@ impl Plugin for StarPlugin {
                     .in_schedule(OnEnter(AppState::Game))
             )
             .add_systems(
-                (tick_star_spawn_timer, spawn_occassional_stars)
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                (
+                    tick_star_spawn_timer, 
+                    spawn_occassional_stars
+                )
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running)),
             )
             .add_system(
                 despawn_stars

@@ -34,8 +34,8 @@ impl Plugin for EnemyPlugin {
                 confine_enemy_movement,
                 bounce_enemy_movement,
             )
-                .in_set(OnUpdate(AppState::Game))
-                .in_set(OnUpdate(SimulationState::Running)),
+            .in_set(OnUpdate(AppState::Game))
+            .in_set(OnUpdate(SimulationState::Running)),
         )
         .add_system(
             despawn_enemies
