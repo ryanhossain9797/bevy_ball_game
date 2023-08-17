@@ -1,24 +1,24 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{
-    components::{MainMenu, PlayButton, QuitButton},
+use crate::game::ui::pause_menu::{
+    components::{MainMenuButton, PauseMenu, ResumeButton},
     styles::*,
 };
 
-pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_main_menu(&mut commands, &asset_server);
+pub fn spawn_pause_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let _ = build_pause_menu(&mut commands, &asset_server);
 }
 
-pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
+pub fn despawn_pause_menu(mut commands: Commands, main_menu_query: Query<Entity, With<PauseMenu>>) {
     let main_menu = main_menu_query.get_single().expect("Main menu not found");
 
     commands.entity(main_menu).despawn_recursive();
 }
 
-pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
+pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
     commands
         .spawn((
-            MainMenu {},
+            PauseMenu {},
             NodeBundle {
                 style: MENU_ITEMS_STYLE,
                 background_color: Color::rgba(0., 0., 0., 0.2).into(),
@@ -42,7 +42,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                "Bevy Ball Game",
+                                "Paused",
                                 get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
@@ -60,13 +60,13 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: MENU_NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
-                    PlayButton {},
+                    ResumeButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                "Play",
+                                "Resume",
                                 get_button_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
@@ -83,13 +83,13 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: MENU_NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
-                    QuitButton {},
+                    MainMenuButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                "Quit",
+                                "Main Menu",
                                 get_button_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,

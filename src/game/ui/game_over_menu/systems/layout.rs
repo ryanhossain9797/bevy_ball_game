@@ -1,24 +1,29 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{
-    components::{MainMenu, PlayButton, QuitButton},
+use crate::game::ui::game_over_menu::{
+    components::{GameOverMenu, MainMenuButton, QuitButton, RestartButton},
     styles::*,
 };
 
-pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_main_menu(&mut commands, &asset_server);
+pub fn spawn_game_over_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let _ = build_game_over_menu(&mut commands, &asset_server);
 }
 
-pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
-    let main_menu = main_menu_query.get_single().expect("Main menu not found");
+pub fn despawn_game_over_menu(
+    mut commands: Commands,
+    game_over_menu_query: Query<Entity, With<GameOverMenu>>,
+) {
+    let game_over_menu = game_over_menu_query
+        .get_single()
+        .expect("Main menu not found");
 
-    commands.entity(main_menu).despawn_recursive();
+    commands.entity(game_over_menu).despawn_recursive();
 }
 
-pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
+pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
     commands
         .spawn((
-            MainMenu {},
+            GameOverMenu {},
             NodeBundle {
                 style: MENU_ITEMS_STYLE,
                 background_color: Color::rgba(0., 0., 0., 0.2).into(),
@@ -42,7 +47,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                "Bevy Ball Game",
+                                "Game Over",
                                 get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
@@ -52,7 +57,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     });
                     parent.spawn(image);
                 });
-            //===Play Button===
+            //===Restart Button===
             parent
                 .spawn((
                     ButtonBundle {
@@ -60,13 +65,36 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: MENU_NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
-                    PlayButton {},
+                    RestartButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                "Play",
+                                "Restart",
+                                get_button_text_style(asset_server),
+                            )],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+                });
+            //===Main Menu Button===
+            parent
+                .spawn((
+                    ButtonBundle {
+                        style: MENU_BUTTON_STYLE,
+                        background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                        ..default()
+                    },
+                    MainMenuButton {},
+                ))
+                .with_children(|parent| {
+                    parent.spawn(TextBundle {
+                        text: Text {
+                            sections: vec![TextSection::new(
+                                "Main Menu",
                                 get_button_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,

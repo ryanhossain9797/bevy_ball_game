@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{
+use crate::game::ui::hud::{
     components::{MainMenu, PlayButton, QuitButton},
     styles::*,
 };

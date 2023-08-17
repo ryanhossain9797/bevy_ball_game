@@ -1,7 +1,7 @@
 use bevy::{app::AppExit, prelude::*};
 
 use crate::{
-    main_menu::{
+    game::ui::hud::{
         components::{PlayButton, QuitButton},
         styles::{MENU_HOVERED_BUTTON_COLOR, MENU_NORMAL_BUTTON_COLOR, MENU_PRESSED_BUTTON_COLOR},
     },
@@ -17,17 +17,17 @@ pub fn interact_with_play_button(
 ) {
     match button_query.get_single_mut() {
         Ok((interaction, mut background_color)) => {
-            let (new_color, should_play) = match *interaction {
-                Interaction::Hovered => (MENU_HOVERED_BUTTON_COLOR, false),
-                Interaction::Clicked => (MENU_PRESSED_BUTTON_COLOR, true),
-                Interaction::None => (MENU_NORMAL_BUTTON_COLOR, false),
+            let (new_color, maybe_new_state) = match *interaction {
+                Interaction::Hovered => (MENU_HOVERED_BUTTON_COLOR, None),
+                Interaction::Clicked => (MENU_PRESSED_BUTTON_COLOR, Some(AppState::Game)),
+                Interaction::None => (MENU_NORMAL_BUTTON_COLOR, None),
             };
 
             (*background_color) = new_color.into();
 
-            match should_play {
-                true => app_state_next_state.set(AppState::Game),
-                false => (),
+            match maybe_new_state {
+                Some(state) => app_state_next_state.set(state),
+                None => (),
             }
         }
 

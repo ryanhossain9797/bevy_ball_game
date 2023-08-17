@@ -13,6 +13,7 @@ pub mod player;
 pub mod score;
 pub mod star;
 pub mod system;
+pub mod ui;
 
 pub struct GamePlugin;
 
