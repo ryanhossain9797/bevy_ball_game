@@ -37,7 +37,7 @@ pub fn transition_to_game_state(
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {
-            match simulation_state.0 {
+            match simulation_state.get() {
                 AppState::MainMenu => simulation_state_next_state.set(AppState::Game),
                 _ => (),
             };
@@ -53,7 +53,7 @@ pub fn transition_to_menu_state(
 ) {
     match keyboard_input.just_pressed(KeyCode::P) {
         true => {
-            match simulation_state.0 {
+            match simulation_state.get() {
                 AppState::Game => simulation_state_next_state.set(AppState::MainMenu),
                 _ => (),
             };

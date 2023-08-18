@@ -14,12 +14,13 @@ pub struct ScorePlugin;
 impl Plugin for ScorePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<HighScore>()
-            .add_system(insert_score.in_schedule(OnEnter(AppState::Game)))
+            .add_systems(OnEnter(AppState::Game), insert_score)
             .add_systems(
+                Update,
                 (display_score, update_high_scores, on_high_scores_updated)
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
             )
-            .add_system(remove_score.in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnExit(AppState::Game), remove_score);
     }
 }

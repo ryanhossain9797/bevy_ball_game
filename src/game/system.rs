@@ -16,7 +16,7 @@ pub fn toggle_simulation(
     mut simulation_state_next_state: ResMut<NextState<SimulationState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Space) {
-        let new_state = match simulation_state.0 {
+        let new_state = match simulation_state.get() {
             SimulationState::Running => SimulationState::Paused,
             SimulationState::Paused => SimulationState::Running,
         };
