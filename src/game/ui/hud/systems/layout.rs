@@ -20,6 +20,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
         .spawn((
             NodeBundle {
                 style: HUD_STYLE,
+                z_index: ZIndex::Local(0),
                 ..default()
             },
             HUD {},

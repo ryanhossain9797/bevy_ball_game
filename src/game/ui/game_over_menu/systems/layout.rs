@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::game::ui::game_over_menu::{
-    components::{GameOverMenu, MainMenuButton, QuitButton, RestartButton},
+    components::{FinalScoreText, GameOverMenu, MainMenuButton, QuitButton, RestartButton},
     styles::*,
 };
 
@@ -57,6 +57,21 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                     });
                     parent.spawn(image);
                 });
+            //===Final Score===
+            parent.spawn((
+                TextBundle {
+                    text: Text {
+                        sections: vec![TextSection::new(
+                            "Your final score was:",
+                            get_final_score_text_style(&asset_server),
+                        )],
+                        alignment: TextAlignment::Center,
+                        ..default()
+                    },
+                    ..default()
+                },
+                FinalScoreText {},
+            ));
             //===Restart Button===
             parent
                 .spawn((

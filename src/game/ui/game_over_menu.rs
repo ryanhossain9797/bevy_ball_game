@@ -13,6 +13,7 @@ use self::systems::{
         interact_with_main_menu_button, interact_with_quit_button, interact_with_restart_button,
     },
     layout::{despawn_game_over_menu, spawn_game_over_menu},
+    updates::update_final_score_text,
 };
 
 pub struct GameOverMenuPlugin;
@@ -25,6 +26,7 @@ impl Plugin for GameOverMenuPlugin {
                     interact_with_main_menu_button,
                     interact_with_quit_button,
                     interact_with_restart_button,
+                    update_final_score_text,
                 )
                     .in_set(OnUpdate(AppState::GameOver)),
             )

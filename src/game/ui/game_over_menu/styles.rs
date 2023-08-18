@@ -43,6 +43,14 @@ pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     }
 }
 
+pub fn get_final_score_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
+    TextStyle {
+        font_size: 64.,
+        color: Color::WHITE,
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+    }
+}
+
 pub fn get_button_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     TextStyle {
         font_size: 32.,
