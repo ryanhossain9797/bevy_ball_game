@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::prelude::Component;
 
 #[derive(Component)]
 pub struct PauseMenu {}
@@ -8,3 +8,6 @@ pub struct ResumeButton {}
 
 #[derive(Component)]
 pub struct MainMenuButton {}
+
+#[derive(Component)]
+pub struct QuitButton {}

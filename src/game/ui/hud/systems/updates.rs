@@ -1,10 +1,7 @@
+use crate::game::{enemy::component::Enemy, score::resource::Score};
 use bevy::prelude::*;
 
-use crate::game::{
-    enemy::component::Enemy,
-    score::resource::Score,
-    ui::hud::components::{EnemyText, ScoreText},
-};
+use crate::game::ui::hud::components::{EnemyText, ScoreText};
 
 pub fn update_score_text(mut text_query: Query<&mut Text, With<ScoreText>>, score: Res<Score>) {
     if score.is_changed() {

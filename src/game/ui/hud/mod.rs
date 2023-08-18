@@ -1,17 +1,13 @@
+mod components;
+mod styles;
+mod systems;
+
+use systems::layout::*;
+
+use crate::game::ui::hud::systems::updates::{update_enemy_text, update_score_text};
+use crate::AppState;
 use bevy::prelude::*;
 
-use systems::layout::spawn_hud;
-
-use crate::{game::SimulationState, AppState};
-
-use self::systems::{
-    layout::despawn_hud,
-    updates::{update_enemy_text, update_score_text},
-};
-
-pub mod components;
-pub mod styles;
-pub mod systems;
 pub struct HudPlugin;
 
 impl Plugin for HudPlugin {

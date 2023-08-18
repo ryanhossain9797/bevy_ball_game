@@ -1,18 +1,10 @@
 use bevy::prelude::*;
 
-use crate::game::ui::hud::{
-    components::{EnemyText, ScoreText, HUD},
-    styles::*,
-};
+use crate::game::ui::hud::components::*;
+use crate::game::ui::hud::styles::*;
 
 pub fn spawn_hud(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_hud(&mut commands, &asset_server);
-}
-
-pub fn despawn_hud(mut commands: Commands, main_menu_query: Query<Entity, With<HUD>>) {
-    let main_menu = main_menu_query.get_single().expect("Main menu not found");
-
-    commands.entity(main_menu).despawn_recursive();
+    build_hud(&mut commands, &asset_server);
 }
 
 pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
@@ -20,7 +12,6 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
         .spawn((
             NodeBundle {
                 style: HUD_STYLE,
-                z_index: ZIndex::Local(0),
                 ..default()
             },
             HUD {},
@@ -92,4 +83,10 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
         .id();
 
     hud_entity
+}
+
+pub fn despawn_hud(mut commands: Commands, hud_query: Query<Entity, With<HUD>>) {
+    for entity in hud_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }

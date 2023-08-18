@@ -8,8 +8,7 @@ mod keyboard_helper;
 mod main_menu;
 mod systems;
 
-use game::ui::GameUiPlugin;
-use game::{GamePlugin, SimulationState};
+use game::{ui::GameUIPlugin, GamePlugin, SimulationState};
 use main_menu::MainMenuPlugin;
 use systems::*;
 
@@ -21,7 +20,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(MainMenuPlugin)
         .add_plugin(GamePlugin)
-        .add_plugin(GameUiPlugin)
+        .add_plugin(GameUIPlugin)
         //State Transition
         .add_system(transition_to_game_state)
         .add_system(transition_to_menu_state)

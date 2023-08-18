@@ -1,63 +1,66 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{
-    components::{MainMenu, PlayButton, QuitButton},
-    styles::*,
-};
+use crate::main_menu::components::*;
+use crate::main_menu::styles::*;
 
 pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_main_menu(&mut commands, &asset_server);
+    build_main_menu(&mut commands, &asset_server);
 }
 
 pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
-    let main_menu = main_menu_query.get_single().expect("Main menu not found");
-
-    commands.entity(main_menu).despawn_recursive();
+    if let Ok(main_menu_entity) = main_menu_query.get_single() {
+        commands.entity(main_menu_entity).despawn_recursive();
+    }
 }
 
 pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
-    commands
+    let main_menu_entity = commands
         .spawn((
-            MainMenu {},
             NodeBundle {
-                style: MENU_ITEMS_STYLE,
-                background_color: Color::rgba(0., 0., 0., 0.2).into(),
+                style: MAIN_MENU_STYLE,
                 ..default()
             },
+            MainMenu {},
         ))
         .with_children(|parent| {
-            //===Title===
+            // === Title ===
             parent
                 .spawn(NodeBundle {
-                    style: MENU_TITLE_BAR_STYLE,
+                    style: TITLE_STYLE,
                     ..default()
                 })
                 .with_children(|parent| {
-                    let image = ImageBundle {
-                        style: MENU_IMAGE_STYLE,
+                    // Image 1
+                    parent.spawn(ImageBundle {
+                        style: IMAGE_STYLE,
                         image: asset_server.load("sprites/ball_blue_large.png").into(),
                         ..default()
-                    };
-                    parent.spawn(image.clone());
+                    });
+                    // Text
                     parent.spawn(TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Bevy Ball Game",
-                                get_title_text_style(asset_server),
+                                get_title_text_style(&asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
                         },
                         ..default()
                     });
-                    parent.spawn(image);
+                    // Image 2
+                    parent.spawn(ImageBundle {
+                        style: IMAGE_STYLE,
+                        image: asset_server.load("sprites/ball_red_large.png").into(),
+                        ..default()
+                    });
                 });
-            //===Play Button===
+            // === Play Button ===
             parent
                 .spawn((
                     ButtonBundle {
-                        style: MENU_BUTTON_STYLE,
-                        background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                        style: BUTTON_STYLE,
+                        background_color: NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
                     PlayButton {},
@@ -67,7 +70,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Play",
-                                get_button_text_style(asset_server),
+                                get_button_text_style(&asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -75,12 +78,12 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         ..default()
                     });
                 });
-            //===Quit Button===
+            // === Quit Button ===
             parent
                 .spawn((
                     ButtonBundle {
-                        style: MENU_BUTTON_STYLE,
-                        background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                        style: BUTTON_STYLE,
+                        background_color: NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
                     QuitButton {},
@@ -90,7 +93,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Quit",
-                                get_button_text_style(asset_server),
+                                get_button_text_style(&asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -99,5 +102,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     });
                 });
         })
-        .id()
+        .id();
+
+    main_menu_entity
 }

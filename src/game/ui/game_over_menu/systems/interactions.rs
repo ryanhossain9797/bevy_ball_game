@@ -1,12 +1,32 @@
-use bevy::{app::AppExit, prelude::*};
+use bevy::app::AppExit;
+use bevy::prelude::*;
 
-use crate::{
-    game::ui::game_over_menu::{
-        components::{MainMenuButton, QuitButton, RestartButton},
-        styles::{MENU_HOVERED_BUTTON_COLOR, MENU_NORMAL_BUTTON_COLOR, MENU_PRESSED_BUTTON_COLOR},
-    },
-    AppState,
-};
+use crate::game::ui::game_over_menu::components::*;
+use crate::game::ui::game_over_menu::styles::*;
+use crate::AppState;
+
+pub fn interact_with_restart_button(
+    mut button_query: Query<
+        (&Interaction, &mut BackgroundColor),
+        (Changed<Interaction>, With<RestartButton>),
+    >,
+    mut app_state_next_state: ResMut<NextState<AppState>>,
+) {
+    for (interaction, mut color) in button_query.iter_mut() {
+        match *interaction {
+            Interaction::Clicked => {
+                *color = PRESSED_BUTTON.into();
+                app_state_next_state.set(AppState::Game);
+            }
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
+            }
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
+        }
+    }
+}
 
 pub fn interact_with_main_menu_button(
     mut button_query: Query<
@@ -15,74 +35,41 @@ pub fn interact_with_main_menu_button(
     >,
     mut app_state_next_state: ResMut<NextState<AppState>>,
 ) {
-    match button_query.get_single_mut() {
-        Ok((interaction, mut background_color)) => {
-            let (new_color, go_to_main_menu) = match *interaction {
-                Interaction::Hovered => (MENU_HOVERED_BUTTON_COLOR, false),
-                Interaction::Clicked => (MENU_PRESSED_BUTTON_COLOR, true),
-                Interaction::None => (MENU_NORMAL_BUTTON_COLOR, false),
-            };
-
-            (*background_color) = new_color.into();
-
-            match go_to_main_menu {
-                true => app_state_next_state.set(AppState::MainMenu),
-                false => (),
+    for (interaction, mut color) in button_query.iter_mut() {
+        match *interaction {
+            Interaction::Clicked => {
+                *color = PRESSED_BUTTON.into();
+                app_state_next_state.set(AppState::MainMenu);
             }
-        }
-
-        Err(_) => {
-            ();
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
+            }
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
         }
     }
 }
+
 pub fn interact_with_quit_button(
+    mut app_exit_event_writer: EventWriter<AppExit>,
     mut button_query: Query<
         (&Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<QuitButton>),
     >,
-    mut exit_event_writer: EventWriter<AppExit>,
 ) {
-    match button_query.get_single_mut() {
-        Ok((interaction, mut background_color)) => {
-            let (new_color, should_quit) = match *interaction {
-                Interaction::Hovered => (MENU_HOVERED_BUTTON_COLOR, false),
-                Interaction::Clicked => (MENU_PRESSED_BUTTON_COLOR, true),
-                Interaction::None => (MENU_NORMAL_BUTTON_COLOR, false),
-            };
-            (*background_color) = new_color.into();
-            match should_quit {
-                true => exit_event_writer.send(AppExit),
-                false => (),
+    for (interaction, mut color) in button_query.iter_mut() {
+        match *interaction {
+            Interaction::Clicked => {
+                *color = PRESSED_BUTTON.into();
+                app_exit_event_writer.send(AppExit);
             }
-        }
-        Err(_) => {
-            ();
-        }
-    }
-}
-pub fn interact_with_restart_button(
-    mut button_query: Query<
-        (&Interaction, &mut BackgroundColor),
-        (Changed<Interaction>, With<RestartButton>),
-    >,
-    mut app_state_next_state: ResMut<NextState<AppState>>,
-) {
-    match button_query.get_single_mut() {
-        Ok((interaction, mut background_color)) => {
-            let (new_color, should_restart) = match *interaction {
-                Interaction::Hovered => (MENU_HOVERED_BUTTON_COLOR, false),
-                Interaction::Clicked => (MENU_PRESSED_BUTTON_COLOR, true),
-                Interaction::None => (MENU_NORMAL_BUTTON_COLOR, false),
-            };
-            (*background_color) = new_color.into();
-            match should_restart {
-                true => app_state_next_state.set(AppState::Game),
-                false => (),
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
             }
-        }
-        Err(_) => {
-            ();
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
         }
     }
 }

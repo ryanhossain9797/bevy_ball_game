@@ -1,35 +1,21 @@
 use bevy::prelude::*;
 
-use crate::game::ui::game_over_menu::{
-    components::{FinalScoreText, GameOverMenu, MainMenuButton, QuitButton, RestartButton},
-    styles::*,
-};
+use crate::game::ui::game_over_menu::components::*;
+use crate::game::ui::game_over_menu::styles::*;
 
 pub fn spawn_game_over_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_game_over_menu(&mut commands, &asset_server);
-}
-
-pub fn despawn_game_over_menu(
-    mut commands: Commands,
-    game_over_menu_query: Query<Entity, With<GameOverMenu>>,
-) {
-    let game_over_menu = game_over_menu_query
-        .get_single()
-        .expect("Main menu not found");
-
-    commands.entity(game_over_menu).despawn_recursive();
+    build_game_over_menu(&mut commands, &asset_server);
 }
 
 pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
-    commands
+    let game_over_menu_entity = commands
         .spawn((
-            GameOverMenu {},
             NodeBundle {
                 style: GAME_OVER_MENU_STYLE,
-                z_index: ZIndex::Global(2),
-                background_color: Color::rgba(0., 0., 0., 0.2).into(),
+                z_index: ZIndex::Local(2), // See Ref. 1
                 ..default()
             },
+            GameOverMenu {},
         ))
         .with_children(|parent| {
             parent
@@ -39,33 +25,19 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                     ..default()
                 })
                 .with_children(|parent| {
-                    //===Title===
-                    parent
-                        .spawn(NodeBundle {
-                            style: MENU_TITLE_BAR_STYLE,
+                    // Title
+                    parent.spawn(TextBundle {
+                        text: Text {
+                            sections: vec![TextSection::new(
+                                "Game Over",
+                                get_title_text_style(&asset_server),
+                            )],
+                            alignment: TextAlignment::Center,
                             ..default()
-                        })
-                        .with_children(|parent| {
-                            let image = ImageBundle {
-                                style: MENU_IMAGE_STYLE,
-                                image: asset_server.load("sprites/ball_blue_large.png").into(),
-                                ..default()
-                            };
-                            parent.spawn(image.clone());
-                            parent.spawn(TextBundle {
-                                text: Text {
-                                    sections: vec![TextSection::new(
-                                        "Game Over",
-                                        get_title_text_style(asset_server),
-                                    )],
-                                    alignment: TextAlignment::Center,
-                                    ..default()
-                                },
-                                ..default()
-                            });
-                            parent.spawn(image);
-                        });
-                    //===Final Score===
+                        },
+                        ..default()
+                    });
+                    // Final Score Text
                     parent.spawn((
                         TextBundle {
                             text: Text {
@@ -80,22 +52,23 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         },
                         FinalScoreText {},
                     ));
-                    //===Restart Button===
+                    // Restart Button
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: MENU_BUTTON_STYLE,
-                                background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                                style: BUTTON_STYLE,
+                                background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
                             RestartButton {},
                         ))
                         .with_children(|parent| {
                             parent.spawn(TextBundle {
+                                style: Style { ..default() },
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Restart",
-                                        get_button_text_style(asset_server),
+                                        get_button_text_style(&asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
@@ -103,22 +76,23 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                                 ..default()
                             });
                         });
-                    //===Main Menu Button===
+                    // Main Menu Button
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: MENU_BUTTON_STYLE,
-                                background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                                style: BUTTON_STYLE,
+                                background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
                             MainMenuButton {},
                         ))
                         .with_children(|parent| {
                             parent.spawn(TextBundle {
+                                style: Style { ..default() },
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Main Menu",
-                                        get_button_text_style(asset_server),
+                                        get_button_text_style(&asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
@@ -126,22 +100,23 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                                 ..default()
                             });
                         });
-                    //===Quit Button===
+                    // Quit Button
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: MENU_BUTTON_STYLE,
-                                background_color: MENU_NORMAL_BUTTON_COLOR.into(),
+                                style: BUTTON_STYLE,
+                                background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
                             QuitButton {},
                         ))
                         .with_children(|parent| {
                             parent.spawn(TextBundle {
+                                style: Style { ..default() },
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Quit",
-                                        get_button_text_style(asset_server),
+                                        get_button_text_style(&asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
@@ -151,5 +126,20 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         });
                 });
         })
-        .id()
+        .id();
+
+    game_over_menu_entity
 }
+
+pub fn despawn_game_over_menu(
+    mut commands: Commands,
+    game_over_menu_query: Query<Entity, With<GameOverMenu>>,
+) {
+    if let Ok(game_over_menu_entity) = game_over_menu_query.get_single() {
+        commands.entity(game_over_menu_entity).despawn_recursive();
+    }
+}
+
+// References
+// 1. UI Z-Index
+// https://github.com/bevyengine/bevy/blob/latest/examples/ui/z_index.rs
