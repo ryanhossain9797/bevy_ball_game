@@ -1,10 +1,10 @@
-use bevy::prelude::*;
+use bevy::prelude::Component;
 
 #[derive(Component)]
-pub struct MainMenu {}
+pub struct HUD {}
 
 #[derive(Component)]
-pub struct PlayButton {}
+pub struct ScoreText {}
 
 #[derive(Component)]
-pub struct QuitButton {}
+pub struct EnemyText {}

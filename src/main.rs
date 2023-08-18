@@ -9,7 +9,7 @@ mod main_menu;
 mod systems;
 
 use game::ui::GameUiPlugin;
-use game::GamePlugin;
+use game::{GamePlugin, SimulationState};
 use main_menu::MainMenuPlugin;
 use systems::*;
 

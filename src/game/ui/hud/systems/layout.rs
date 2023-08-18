@@ -1,103 +1,94 @@
 use bevy::prelude::*;
 
 use crate::game::ui::hud::{
-    components::{MainMenu, PlayButton, QuitButton},
+    components::{EnemyText, ScoreText, HUD},
     styles::*,
 };
 
-pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _ = build_main_menu(&mut commands, &asset_server);
+pub fn spawn_hud(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let _ = build_hud(&mut commands, &asset_server);
 }
 
-pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
+pub fn despawn_hud(mut commands: Commands, main_menu_query: Query<Entity, With<HUD>>) {
     let main_menu = main_menu_query.get_single().expect("Main menu not found");
 
     commands.entity(main_menu).despawn_recursive();
 }
 
-pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
-    commands
+pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
+    let hud_entity = commands
         .spawn((
-            MainMenu {},
             NodeBundle {
-                style: MENU_ITEMS_STYLE,
-                background_color: Color::rgba(0., 0., 0., 0.2).into(),
+                style: HUD_STYLE,
                 ..default()
             },
+            HUD {},
         ))
         .with_children(|parent| {
-            //===Title===
+            // LHS
             parent
                 .spawn(NodeBundle {
-                    style: MENU_TITLE_BAR_STYLE,
+                    style: LHS_STYLE,
+                    background_color: BACKGROUND_COLOR.into(),
                     ..default()
                 })
                 .with_children(|parent| {
-                    let image = ImageBundle {
-                        style: MENU_IMAGE_STYLE,
-                        image: asset_server.load("sprites/ball_blue_large.png").into(),
-                        ..default()
-                    };
-                    parent.spawn(image.clone());
-                    parent.spawn(TextBundle {
-                        text: Text {
-                            sections: vec![TextSection::new(
-                                "Bevy Ball Game",
-                                get_title_text_style(asset_server),
-                            )],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
+                    // Star Image
+                    parent.spawn(ImageBundle {
+                        style: IMAGE_STYLE,
+                        image: asset_server.load("sprites/star.png").into(),
                         ..default()
                     });
-                    parent.spawn(image);
-                });
-            //===Play Button===
-            parent
-                .spawn((
-                    ButtonBundle {
-                        style: MENU_BUTTON_STYLE,
-                        background_color: MENU_NORMAL_BUTTON_COLOR.into(),
-                        ..default()
-                    },
-                    PlayButton {},
-                ))
-                .with_children(|parent| {
-                    parent.spawn(TextBundle {
-                        text: Text {
-                            sections: vec![TextSection::new(
-                                "Play",
-                                get_button_text_style(asset_server),
-                            )],
-                            alignment: TextAlignment::Center,
+                    // Score Text
+                    parent.spawn((
+                        TextBundle {
+                            style: Style { ..default() },
+                            text: Text {
+                                sections: vec![TextSection::new(
+                                    "0",
+                                    get_text_style(&asset_server),
+                                )],
+                                alignment: TextAlignment::Center,
+                                ..default()
+                            },
                             ..default()
                         },
-                        ..default()
-                    });
+                        ScoreText {},
+                    ));
                 });
-            //===Quit Button===
+            // RHS
             parent
-                .spawn((
-                    ButtonBundle {
-                        style: MENU_BUTTON_STYLE,
-                        background_color: MENU_NORMAL_BUTTON_COLOR.into(),
-                        ..default()
-                    },
-                    QuitButton {},
-                ))
+                .spawn(NodeBundle {
+                    style: RHS_STYLE,
+                    background_color: BACKGROUND_COLOR.into(),
+                    ..default()
+                })
                 .with_children(|parent| {
-                    parent.spawn(TextBundle {
-                        text: Text {
-                            sections: vec![TextSection::new(
-                                "Quit",
-                                get_button_text_style(asset_server),
-                            )],
-                            alignment: TextAlignment::Center,
+                    // Enemy Text
+                    parent.spawn((
+                        TextBundle {
+                            style: Style { ..default() },
+                            text: Text {
+                                sections: vec![TextSection::new(
+                                    "0",
+                                    get_text_style(&asset_server),
+                                )],
+                                alignment: TextAlignment::Center,
+                                ..default()
+                            },
                             ..default()
                         },
+                        EnemyText {},
+                    ));
+                    // Enemy Image
+                    parent.spawn(ImageBundle {
+                        style: IMAGE_STYLE,
+                        image: asset_server.load("sprites/ball_red_large.png").into(),
                         ..default()
                     });
                 });
         })
-        .id()
+        .id();
+
+    hud_entity
 }
