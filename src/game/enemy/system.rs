@@ -2,6 +2,7 @@ use crate::event::GameOver;
 use crate::game::player::HALF_PLAYER_SIZE;
 use crate::game::score::resource::Score;
 use crate::game::{enemy::component::*, enemy::resource::EnemyTimer, player::component::*, *};
+use bevy::audio::Volume;
 use bevy::time::{Timer, TimerMode};
 use bevy::window::PrimaryWindow;
 use rand::random;
@@ -93,9 +94,9 @@ pub fn enemy_movement(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Re
 }
 
 pub fn bounce_enemy_movement(
+    mut commands: Commands,
     mut enemy_query: Query<(&Transform, &mut Enemy)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    audio: Res<Audio>,
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query
@@ -120,11 +121,14 @@ pub fn bounce_enemy_movement(
         };
         if invert_x || invert_y {
             let bounce_sound_1 = asset_server.load("audio/pluck_001.ogg");
-            audio.play(bounce_sound_1);
+            commands.spawn(AudioBundle {
+                source: bounce_sound_1,
+                settings: PlaybackSettings::ONCE.with_volume(Volume::new_relative(1.0)),
+            });
 
             let mut direction = enemy.direction;
 
-            if (invert_x) {
+            if invert_x {
                 direction.x = direction.x * -1.0
             }
             if invert_y {
@@ -169,10 +173,10 @@ pub fn confine_enemy_movement(
 }
 
 pub fn enemy_hit_player(
+    mut commands: Commands,
     enemy_query: Query<&Transform, With<Enemy>>,
     mut player_query: Query<&Transform, With<Player>>,
     mut game_over_event_writer: EventWriter<GameOver>,
-    audio: Res<Audio>,
     score: Res<Score>,
     asset_server: Res<AssetServer>,
 ) {
@@ -185,7 +189,10 @@ pub fn enemy_hit_player(
             if distance < HALF_ENEMY_SIZE + HALF_PLAYER_SIZE {
                 game_over_event_writer.send(GameOver { score: score.value });
                 let explosion_sound = asset_server.load("audio/explosionCrunch_000.ogg");
-                audio.play(explosion_sound);
+                commands.spawn(AudioBundle {
+                    source: explosion_sound,
+                    settings: PlaybackSettings::ONCE.with_volume(Volume::new_relative(1.0)),
+                });
             }
         });
     }

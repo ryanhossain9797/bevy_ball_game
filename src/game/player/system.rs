@@ -7,7 +7,7 @@ use crate::{
     },
     keyboard_helper,
 };
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{audio::Volume, prelude::*, window::PrimaryWindow};
 
 use crate::keyboard_helper::KeyboardDirection;
 
@@ -89,7 +89,6 @@ pub fn player_pickup_star(
     mut commands: Commands,
     star_query: Query<(Entity, &Transform), With<Star>>,
     mut player_query: Query<&Transform, With<Player>>,
-    audio: Res<Audio>,
     asset_server: Res<AssetServer>,
     mut score: ResMut<Score>,
 ) {
@@ -102,7 +101,10 @@ pub fn player_pickup_star(
 
                 if distance < HALF_STAR_SIZE + HALF_PLAYER_SIZE {
                     let pickup_sound = asset_server.load("audio/laserLarge_000.ogg");
-                    audio.play(pickup_sound);
+                    commands.spawn(AudioBundle {
+                        source: pickup_sound,
+                        settings: PlaybackSettings::ONCE.with_volume(Volume::new_relative(1.0)),
+                    });
                     commands.entity(star_entity).despawn();
                     score.value += 1;
                 }
