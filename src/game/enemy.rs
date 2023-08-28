@@ -21,8 +21,9 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<EnemyTimer>()
-            .add_system(spawn_initial_enemies.in_schedule(OnEnter(AppState::Game)))
+            .add_systems(OnEnter(AppState::Game), spawn_initial_enemies)
             .add_systems(
+                Update,
                 (
                     tick_enemy_spawn_timer,
                     spawn_occassional_enemies,
@@ -31,9 +32,9 @@ impl Plugin for EnemyPlugin {
                     confine_enemy_movement,
                     bounce_enemy_movement,
                 )
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
             )
-            .add_system(despawn_enemies.in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnExit(AppState::Game), despawn_enemies);
     }
 }

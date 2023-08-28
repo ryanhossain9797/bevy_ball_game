@@ -22,6 +22,6 @@ pub fn toggle_simulation(
         };
 
         simulation_state_next_state.set(new_state);
-        println!("New state is {:?}", new_state);
+        println!("New state is {new_state:?}");
     }
 }
